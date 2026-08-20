@@ -1,5 +1,5 @@
 import express from 'express';
-import { connectDatabase } from './config/database.js';
+import { connectDatabase, disconnectDatabase } from './config/database.js';
 import { createApiRouter } from './routes.js';
 
 const app = express();
@@ -17,6 +17,11 @@ app.use((request, response, next) => {
   const origin = request.headers.origin;
   if (allowedOrigins.includes(origin)) {
     response.header('Access-Control-Allow-Origin', origin);
+    response.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    response.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  }
+  if (request.method === 'OPTIONS') {
+    return response.sendStatus(200);
   }
   next();
 });
@@ -30,8 +35,24 @@ app.get('/api/health', (_request, response) => {
 async function startServer(): Promise<void> {
   try {
     await connectDatabase();
-    app.listen(port, '0.0.0.0', () => {
+    const server = app.listen(port, '0.0.0.0', () => {
       console.log(`OctoFit API listening at ${baseUrl}`);
+    });
+
+    process.on('SIGTERM', async () => {
+      console.log('SIGTERM received, shutting down gracefully');
+      server.close(async () => {
+        await disconnectDatabase();
+        process.exit(0);
+      });
+    });
+
+    process.on('SIGINT', async () => {
+      console.log('SIGINT received, shutting down gracefully');
+      server.close(async () => {
+        await disconnectDatabase();
+        process.exit(0);
+      });
     });
   } catch (error) {
     console.error('Error connecting to octofit_db:', error);

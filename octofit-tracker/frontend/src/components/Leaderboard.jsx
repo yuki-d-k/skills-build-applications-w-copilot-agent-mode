@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchEndpoint } from '../api.js'
-
-const leaderboardEndpoint = import.meta.env.VITE_CODESPACE_NAME
-  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/leaderboard/`
-  : 'http://localhost:8000/api/leaderboard/'
+import { fetchEndpoint, getApiUrl } from '../api.js'
 
 function Leaderboard() {
   const [entries, setEntries] = useState([])
@@ -11,7 +7,7 @@ function Leaderboard() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchEndpoint(leaderboardEndpoint, controller.signal).then(setEntries).catch((cause) => { if (cause.name !== 'AbortError') setError(cause.message) })
+    fetchEndpoint(getApiUrl('leaderboard'), controller.signal).then(setEntries).catch((cause) => { if (cause.name !== 'AbortError') setError(cause.message) })
     return () => controller.abort()
   }, [])
 

@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react'
-import { fetchEndpoint } from '../api.js'
-
-const activitiesEndpoint = import.meta.env.VITE_CODESPACE_NAME
-  ? `https://${import.meta.env.VITE_CODESPACE_NAME}-8000.app.github.dev/api/activities/`
-  : 'http://localhost:8000/api/activities/'
+import { fetchEndpoint, getApiUrl } from '../api.js'
 
 function Activities() {
   const [activities, setActivities] = useState([])
@@ -11,7 +7,7 @@ function Activities() {
 
   useEffect(() => {
     const controller = new AbortController()
-    fetchEndpoint(activitiesEndpoint, controller.signal).then(setActivities).catch((cause) => {
+    fetchEndpoint(getApiUrl('activities'), controller.signal).then(setActivities).catch((cause) => {
       if (cause.name !== 'AbortError') setError(cause.message)
     })
     return () => controller.abort()
