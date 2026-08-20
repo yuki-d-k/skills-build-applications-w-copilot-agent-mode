@@ -9,8 +9,15 @@ const baseUrl = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
   : `http://localhost:${port}`;
 
-app.use((_request, response, next) => {
-  response.header('Access-Control-Allow-Origin', '*');
+const allowedOrigins = codespaceName
+  ? [`https://${codespaceName}-5173.app.github.dev`]
+  : ['http://localhost:5173'];
+
+app.use((request, response, next) => {
+  const origin = request.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    response.header('Access-Control-Allow-Origin', origin);
+  }
   next();
 });
 app.use(express.json());
