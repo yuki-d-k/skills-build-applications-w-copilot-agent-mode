@@ -9,6 +9,10 @@ const baseUrl = codespaceName
   ? `https://${codespaceName}-8000.app.github.dev`
   : `http://localhost:${port}`;
 
+app.use((_request, response, next) => {
+  response.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 app.use(express.json());
 app.use('/api', createApiRouter());
 
@@ -19,7 +23,7 @@ app.get('/api/health', (_request, response) => {
 async function startServer(): Promise<void> {
   try {
     await connectDatabase();
-    app.listen(port, () => {
+    app.listen(port, '0.0.0.0', () => {
       console.log(`OctoFit API listening at ${baseUrl}`);
     });
   } catch (error) {
