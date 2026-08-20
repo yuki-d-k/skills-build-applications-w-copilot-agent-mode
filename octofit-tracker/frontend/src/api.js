@@ -17,7 +17,11 @@ export function getCollection(payload) {
 }
 
 export async function fetchCollection(resource, signal) {
-  const response = await fetch(getApiUrl(resource), { signal })
-  if (!response.ok) throw new Error(`Unable to load ${resource}`)
+  return fetchEndpoint(getApiUrl(resource), signal)
+}
+
+export async function fetchEndpoint(endpoint, signal) {
+  const response = await fetch(endpoint, { signal })
+  if (!response.ok) throw new Error(`Unable to load ${endpoint}`)
   return getCollection(await response.json())
 }
