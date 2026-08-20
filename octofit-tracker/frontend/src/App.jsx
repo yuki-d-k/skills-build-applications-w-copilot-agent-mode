@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <Link className="brand" to="/"><span className="brand-mark">O</span><span>OctoFit <em>Tracker</em></span></Link>
+        <Link className="brand" to="/"><img className="brand-logo" src="/octofitapp-small.png" alt="" /><span>OctoFit <em>Tracker</em></span></Link>
         <nav aria-label="Primary navigation">
           <NavLink to="/activities">Activities</NavLink>
           <NavLink to="/leaderboard">Leaderboard</NavLink>
